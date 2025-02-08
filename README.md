@@ -15,7 +15,7 @@
 *  **Responsive Design** Works well on various screen sizes.
 
 ## How to Use
-markdown ![アプリのスクリーンショット](./images/screenshot.png)
+markdown ![アプリのスクリーンショット](/images/screenshot.png)
 1.  **Open `250204_layout.html` in your web browser.**  (No server required!)
 2.  **Drag and drop PNG or JPEG images** onto the "Drop images here" area, or click the area to select files.
 3.  **Reorder images** by dragging them within the image list.
@@ -55,7 +55,7 @@ tsurezure_lab
 *  **レスポンシブデザイン**: 様々な画面サイズで適切に表示されます。
 
 ## 使い方
-markdown ![アプリのスクリーンショット](./images/screenshot.png)
+markdown ![アプリのスクリーンショット](/images/screenshot.png)
 1.  **Webブラウザで `250204_layout.html` を開きます。** (サーバーは不要です！)
 2.  **PNGまたはJPEG画像を「ここに画像をドロップ」エリアにドラッグ＆ドロップ** するか、エリアをクリックしてファイルを選択します。
 3.  画像リスト内で画像をドラッグして **画像の順序を並べ替え** ます。
