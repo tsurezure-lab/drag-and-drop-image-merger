@@ -504,55 +504,70 @@
         }
 
         function updatePreview() {
-            if (images.length === 0) {
-                previewImage.src = "";
-                return;
-            }
+          if (images.length === 0) {
+            previewImage.src = "";
+            return;
+          }
 
-            const canvas = document.createElement('canvas');
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = false;
+          ctx.mozImageSmoothingEnabled = false;
+          ctx.webkitImageSmoothingEnabled = false;
+          ctx.msImageSmoothingEnabled = false;
+
+          // 最大幅を計算
+          let maxWidth = 0;
+          for (const imageData of images) {
+            maxWidth = Math.max(maxWidth, imageData.img.width);
+          }
+
+          // 縦結合の場合
+          if (mergeDirection === 'vertical') {
             let totalHeight = 0;
+            canvas.width = maxWidth;
+
+            // 各画像の高さを合計し、リサイズ後の高さを計算
+            for (const imageData of images) {
+              const scale = maxWidth / imageData.img.width;
+              totalHeight += imageData.img.height * scale;
+            }
+            canvas.height = totalHeight;
+
+            let currentY = 0;
+            for (const imageData of images) {
+              const scale = maxWidth / imageData.img.width;
+              const scaledHeight = imageData.img.height * scale;
+              ctx.drawImage(imageData.img, 0, currentY, maxWidth, scaledHeight);
+              currentY += scaledHeight;
+            }
+          } else { // 横結合の場合
             let totalWidth = 0;
-            let maxWidth = 0;
+             // 各画像の高さを合計し、リサイズ後の高さを計算
             let maxHeight = 0;
-
-            images.forEach(imageData => {
-                maxWidth = Math.max(maxWidth, imageData.img.width);
-                maxHeight = Math.max(maxHeight, imageData.img.height);
-            });
-
-            if (mergeDirection === 'vertical') {
-                totalHeight = images.reduce((sum, imageData) => sum + imageData.img.height, 0);
-                canvas.width = maxWidth;
-                canvas.height = totalHeight;
-            } else { // horizontal
-                totalWidth = images.reduce((sum, imageData) => sum + imageData.img.width, 0);
-                canvas.width = totalWidth;
-                canvas.height = maxHeight;
+            for (const imageData of images){
+               maxHeight = Math.max(maxHeight, imageData.img.height)
             }
 
-            const ctx = canvas.getContext('2d');
+            canvas.height = maxHeight;
 
-            ctx.imageSmoothingEnabled = false;
-            ctx.mozImageSmoothingEnabled = false;
-            ctx.webkitImageSmoothingEnabled = false;
-            ctx.msImageSmoothingEnabled = false;
+            for (const imageData of images) {
+                const scale = maxHeight / imageData.img.height;
+                totalWidth += imageData.img.width * scale;
+
+            }
+            canvas.width = totalWidth;
 
             let currentX = 0;
-            let currentY = 0;
+            for (const imageData of images) {
+                const scale = maxHeight / imageData.img.height;
+                const scaledWidth = imageData.img.width * scale;
+              ctx.drawImage(imageData.img, currentX, 0,  scaledWidth, maxHeight);
+              currentX += scaledWidth;
+            }
+          }
 
-            images.forEach(imageData => {
-                if (mergeDirection === 'vertical') {
-                    ctx.drawImage(imageData.img, 0, currentY);
-                    currentY += imageData.img.height;
-                } else { // horizontal
-                    ctx.drawImage(imageData.img, currentX, 0);
-                    currentX += imageData.img.width;
-                }
-            });
-
-            const dataURL = canvas.toDataURL('image/png');
-            previewImage.src = dataURL;
-
+          previewImage.src = canvas.toDataURL('image/png');
         }
 
         // ダウンロードボタンの処理
