@@ -361,6 +361,39 @@
             input.click();
         });
 
+        // クリップボードからの貼り付けに対応
+        document.addEventListener('paste', (e) => {
+          const items = e.clipboardData.items;
+          let file = null;
+          for (const item of items) {
+              if (item.type.startsWith('image/')) {
+                file = item.getAsFile();
+
+                // handleFilesを使いまわすと、画像以外のファイルが来た時に不具合があるので、
+                // handleFiles相当の処理をここにも記述する
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const dataURL = e.target.result;
+                        const img = new Image();
+
+                        img.onload = () => {
+                          addImage(dataURL, file.name, img);
+
+                          // プログレスバーとダウンロードボタンの更新
+                          progressBar.style.width = '100%'; // 1枚だけなので100%にする
+                          downloadButton.disabled = false; // 画像が追加されたら有効にする
+                        }
+                        img.src = dataURL;
+                    };
+                    reader.readAsDataURL(file);
+                  }
+
+                break; // 最初に見つかった画像のみ処理
+              }
+          }
+        });
+
         function handleFiles(files) {
             let loadedCount = 0;
             const totalFiles = files.length;
